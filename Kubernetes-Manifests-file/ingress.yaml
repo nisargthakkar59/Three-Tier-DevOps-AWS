@@ -1,30 +1,29 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: mainlb
+  name: three-tier-ingress
   namespace: three-tier
   annotations:
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: alb
   rules:
-    - host: backend.amanpathakdevops.study
-      http:
-        paths:
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: api
-                port:   
-                  number: 3500
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: frontend
-                port: 
-                  number: 3000
+  - http:
+      paths:
+      # Route 1: Backend API Traffic
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: api
+            port:
+              number: 3500
+      # Route 2: Frontend UI Traffic
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 3000
       
